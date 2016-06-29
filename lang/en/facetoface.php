@@ -724,7 +724,7 @@ $string['venue_help'] = '**Venue** is the building the session will be held in.
 The **Venue** displays on the \'Sign-up\' page, the \'View all sessions\' page and in all email notifications.';
 
 $string['waitlistedmessage_help'] = 'This message is sent out whenever users sign-up for a wait-listed session.';
-
+$string['search:activity'] = 'Facetoface - activity information';
 /* Face-to-face events and logging */
 $string['eventaddsession'] = 'Session added';
 $string['eventaddsessionfailed'] = 'Session add (FAILED)';

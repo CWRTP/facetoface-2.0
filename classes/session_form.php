@@ -228,12 +228,21 @@ class mod_facetoface_session_form extends moodleform {
     }
 
     public function validation($data, $files) {
+        
         $errors = parent::validation($data, $files);
         $dateids = $data['sessiondateid'];
         $dates = count($dateids);
+        // added on 11/30/2016 by Boudhayan to fix wrong start date end date issue
+        $timestart = $data['timestart'];
+        $timefinish = $data['timefinish'];
+        //
         for ($i = 0; $i < $dates; $i++) {
-            $starttime = $data["timestart[$i]"];
-            $endtime = $data["timefinish[$i]"];
+            
+            $starttime = $timestart[$i];
+            $endtime = $timefinish[$i];
+            /*
+            $starttime = $data["timestart[$i]"]; 
+            $endtime = $data["timefinish[$i]"]; //commented on 11/30/2016 by Boudhayan to fix wrong start date end date issue*/
             $removecheckbox = empty($data["datedelete"]) ? array() : $data["datedelete"];
             if ($starttime > $endtime && !isset($removecheckbox[$i])) {
                 $errstr = get_string('error:sessionstartafterend', 'facetoface');

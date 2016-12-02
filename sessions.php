@@ -171,10 +171,21 @@ if ($fromform = $mform->get_data()) { // Form submitted.
 
         $timestartfield = "timestart[$i]";
         $timefinishfield = "timefinish[$i]";
+
+        /*
         if (!empty($fromform->$timestartfield) and !empty($fromform->$timefinishfield)) {
             $date = new stdClass();
             $date->timestart = $fromform->$timestartfield;
             $date->timefinish = $fromform->$timefinishfield;
+            $sessiondates[] = $date;
+        }
+        */
+        if (!empty($fromform->timestart[$i]) and !empty($fromform->timefinish[$i])) {
+            $date = new stdClass();
+            $date->timestart = $fromform->timestart[$i];
+            $date->timefinish = $fromform->timefinish[$i];
+            print_object($date->timestart);
+            print_object($date->timefinish);
             $sessiondates[] = $date;
         }
     }

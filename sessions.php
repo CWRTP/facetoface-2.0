@@ -169,8 +169,6 @@ if ($fromform = $mform->get_data()) { // Form submitted.
             continue; // Skip this date.
         }
 
-        $timestartfield = "timestart[$i]";
-        $timefinishfield = "timefinish[$i]";
         if (!empty($fromform->timestart[$i]) and !empty($fromform->timefinish[$i])) {
             $date = new stdClass();
             $date->timestart = $fromform->timestart[$i];

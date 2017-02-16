@@ -2583,9 +2583,15 @@ function facetoface_cm_info_view(cm_info $cm) {
                 $cancelurl  = new moodle_url('/mod/facetoface/cancelsignup.php', array('s' => $session->id));
                 $cancellink = ' ' . html_writer::link($cancelurl, $strcancel, array('class' => 'f2fsessionlinks f2fcancel', 'title' => $strcancel));
             }
-
+            $user = facetoface_get_attendee($session->id, $USER->id);
+            $status = $user->statuscode;
             // Add table data.
-            $table->data[] = array(get_string('bookingstatus', 'facetoface') . ': ');
+            if ($status == MDL_F2F_STATUS_BOOKED){
+                $table->data[] = array(get_string('bookingstatus','facetoface') . ': ');
+            }
+            else{
+                $table->data[] = array(get_string('bookingwaitliststatus','facetoface').': ');
+            }
             $table->data[] = array($location, $venue, $sessiondate, $sessiontime);
             $table->data[] = array(
                 html_writer::tag('span', get_string('options', 'facetoface') . ': ' .

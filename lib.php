@@ -2102,11 +2102,21 @@ function facetoface_send_notice($postsubject, $posttext, $posttextmgrheading,
     $posttextmgrheading = facetoface_email_substitutions($posttextmgrheading, $facetoface->name, $facetoface->reminderperiod,
                                                          $user, $session, $session->id);
 
+    $params = array(get_config(null, 'facetoface_fromaddress'));
+    $fromid = $DB->get_record_sql("
+        SELECT
+            u.id
+        FROM
+            {user} u
+        WHERE
+            u.email = ?
+    ", $params);
     $posthtml = ''; // FIXME.
     if ($fromaddress = get_config(null, 'facetoface_fromaddress')) {
         $from = new stdClass();
         $from->maildisplay = true;
         $from->email = $fromaddress;
+        $from->id = $fromid->id;
     } else {
         $from = null;
     }

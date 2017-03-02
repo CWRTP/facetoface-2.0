@@ -787,7 +787,7 @@ function facetoface_email_substitutions($msg, $facetofacename, $reminderperiod, 
 
     // Custom session fields (they look like "session:shortname" in the templates).
     $customfields = facetoface_get_session_customfields();
-    $customdata = $DB->get_records('facetoface_session_data', array('sessionid' => $sessionid), '', 'fieldid, data');
+    $customdata = $DB->get_records('facetoface_session_data', array('sessionid' => $data->id), '', 'fieldid, data');
     foreach ($customfields as $field) {
         $placeholder = "[session:{$field->shortname}]";
         $value = '';
@@ -904,12 +904,23 @@ function facetoface_cron() {
                                                    $user, $signupdata, $signupdata->sessionid);
         $posttextmgrheading = facetoface_email_substitutions($posttextmgrheading, $signupdata->facetofacename, $signupdata->reminderperiod,
                                                              $user, $signupdata, $signupdata->sessionid);
+        
+        $params = array(get_config(null, 'facetoface_fromaddress'));
+        $fromid = $DB->get_record_sql("
+                  SELECT
+                        u.id
+                    FROM
+                        {user} u
+                   WHERE
+                        u.email = ?
+                   ", $params);
 
         $posthtml = ''; // FIXME.
         if ($fromaddress = get_config(null, 'facetoface_fromaddress')) {
             $from = new stdClass();
             $from->maildisplay = true;
             $from->email = $fromaddress;
+            $from->id = $fromid->id;
         } else {
             $from = null;
         }
@@ -2561,7 +2572,11 @@ function facetoface_cm_info_view(cm_info $cm) {
             $location = '&nbsp;';
             $customfielddata = facetoface_get_customfielddata($session->id);
             if (!empty($customfielddata['location'])) {
-                $location = ' ' . $customfielddata['location']->data;
+                $location = 'Location : ' . $customfielddata['location']->data;
+            }
+            $room = '&nbsp;';
+            if (!empty($customfielddata['room'])) {
+                $room .= 'Room : ' . $customfielddata['room']->data;
             }
             $venue = '&nbsp;';
             if (!empty($customfielddata['venue'])) {
@@ -2592,7 +2607,11 @@ function facetoface_cm_info_view(cm_info $cm) {
             else{
                 $table->data[] = array(get_string('bookingwaitliststatus','facetoface').': ');
             }
-            $table->data[] = array($location, $venue, $sessiondate, $sessiontime);
+            $table->data[] = array($location);
+            $table->data[] = array($room);
+            $table->data[] = array($venue);
+            $table->data[] = array($sessiondate);
+            $table->data[] = array($sessiontime);
             $table->data[] = array(
                 html_writer::tag('span', get_string('options', 'facetoface') . ': ' .
                 html_writer::link(
@@ -2730,6 +2749,9 @@ function facetoface_get_ical_attachment($method, $facetoface, $session, $user) {
         $customfielddata = facetoface_get_customfielddata($session->id);
         $locationstring = '';
         if (!empty($customfielddata['room'])) {
+            if (!empty($locationstring)) {
+                $locationstring .= "\n";
+            }
             $locationstring .= $customfielddata['room']->data;
         }
         if (!empty($customfielddata['venue'])) {
